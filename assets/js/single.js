@@ -1,14 +1,30 @@
 var issueContainerEl = document.querySelector("#issues-container");
 var limitWarningEl = document.querySelector("#limit-warning");
 var repoNameEl = document.querySelector("#repo-name");
+var queryString = document.location.search;
+
+
+var getRepoName = function() {
+    // grab repo name from url query string
+    var repoName = queryString.split("=")[1];
+
+    if (repoName) {
+        // display repo name on page
+        repoNameEl.textContent = repoName;
+        getRepoIssues(repoName);
+    } else {
+        // if no repo was given, redirect to the homepage
+        document.location.replace("./index.html");
+    }
+};
 
 
 var getRepoIssues = function(repo) {
 // format the github api url
 var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
-
+// console.log(apiUrl);
 // make a get request to url
-fetch(apiUrl).then(function(response) {
+    fetch(apiUrl).then(function(response) {
         // request was sucessful
         if (response.ok) {
             response.json().then(function(data) {
@@ -22,8 +38,8 @@ fetch(apiUrl).then(function(response) {
             });
         
         } else {
-            console.log(response);
-            alert("There was a problem with your request!");
+            // if not successful, redirect to homepage
+            document.location.replace("./index.html")
         }
     });
 };
@@ -82,4 +98,6 @@ var displayWarning = function(repo) {
     limitWarningEl.appendChild(linkEl);
 };
 
-getRepoIssues('enjin/enjin-minecraft-plugin');
+
+
+getRepoName();
